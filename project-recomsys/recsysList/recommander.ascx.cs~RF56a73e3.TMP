@@ -1,0 +1,101 @@
+﻿using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace recsysList
+{
+    public partial class recommander : System.Web.UI.UserControl
+    {
+        public string userID { get; set; }
+        public string blank { get; set; }
+        public string firstProduct { get; set; }
+        public string secondProduct { get; set; }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // Retrieve the storage account from the connection string.
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                ConfigurationManager.AppSettings["StorageConnectionString"]);
+
+            // Create the table client.
+            CloudTableClient tableClientState = storageAccount.CreateCloudTableClient();
+            CloudTableClient tableClientUser = storageAccount.CreateCloudTableClient();
+
+            // Create the CloudTable object that represents the table.
+            CloudTable tableState = tableClientState.GetTableReference("forMinimumLayer");
+            CloudTable tableUser = tableClientUser.GetTableReference("forUser");
+
+            // Create a retrieve operation that takes a entity.
+            TableOperation retrieveOperationState = TableOperation.Retrieve<CustomerEntity>(this.firstProduct, this.secondProduct);
+            TableOperation retrieveOperationUser = TableOperation.Retrieve<CustomerEntity>(this.userID, this.blank);
+
+            // Execute the retrieve operation.
+            TableResult retrievedResultState = tableState.Execute(retrieveOperationState);
+            TableResult retrievedResultUser = tableUser.Execute(retrieveOperationUser);
+
+            // 確認userID是否存在，若存在則按比例分配推薦項目清單；否則，全部由狀態決定推薦項目清單
+            if (retrievedResultUser.Result != null)
+            {
+                string[] recListUser = ((CustomerEntity)retrievedResultUser.Result).recList.Split(',').Take(2).ToArray();
+                string[] recListState = ((CustomerEntity)retrievedResultState.Result).recList.Split(';').Take(3).ToArray();
+                string[] recListFinal = new string[recListUser.Length + recListState.Length];
+                recListUser.CopyTo(recListFinal, 0);
+                recListState.CopyTo(recListFinal, recListUser.Length);
+                foreach (var value in recListFinal)
+                {
+                    //Response.Write("<br />" + value);
+                    Response.Write("<br />" + value);
+                }
+            }
+            else
+            {
+                string[] recListFinal = ((CustomerEntity)retrievedResultState.Result).recList.Split(';').Take(5).ToArray();
+                foreach (var value in recListFinal)
+                {
+                    Response.Write("<br />" + value);
+                }
+                Response.Write(((CustomerEntity)retrievedResultState.Result).recList);
+            }
+              
+            /*
+            string[] recListUser = ((CustomerEntity)retrievedResultUser.Result).recList.Split(',');
+            foreach (var value in recListUser)
+            {
+                Response.Write("<br />" + value);
+            }
+            */
+
+            /*
+            // Check the result exist or not
+            if (retrievedResultState.Result != null)
+                Response.Write(((CustomerEntity)retrievedResultState.Result).recList);
+            else
+                Response.Write("nothing");
+            //
+            if (retrievedResultUser.Result != null)
+                Response.Write("<br />" + ((CustomerEntity)retrievedResultUser.Result).recList);
+            else
+                Response.Write("nothing");
+            */
+        }
+
+
+        public class CustomerEntity : TableEntity
+        {
+            public CustomerEntity(string pKey, string rKey)
+            {
+                this.PartitionKey = pKey;
+                this.RowKey = rKey;
+            }
+            public CustomerEntity() { }
+            public string recList { get; set; }
+        }
+
+    }
+}

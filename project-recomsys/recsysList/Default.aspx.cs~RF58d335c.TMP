@@ -1,0 +1,83 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Table;
+using System.Configuration;
+
+namespace recsysList
+{
+    public partial class Default : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            /*//Account name and key. Modify for your account.
+            string accountName = "advantechrecsys";
+            string accountKey = "hJyseUXHxNR1mZksXwBwqnN4siMhVFmNhubSPiyvS+HugQgrQSrIjSm3bKdUpjcfvymUH5R+JofaQ0HtDDE55w==";
+
+            //Get a reference to the storage account, with authentication credentials.
+            CloudStorageAccount storageAccount = new CloudStorageAccount(new StorageCredentials(accountName, accountKey), true);
+                        */
+            //var aaa = ConfigurationManager.AppSettings["StorageConnectionString"];
+
+            // Retrieve the storage account from the connection string.
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                ConfigurationManager.AppSettings["StorageConnectionString"]);
+
+            // Create the table client.
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+
+            // Create the CloudTable object that represents the "people" table.
+            CloudTable table = tableClient.GetTableReference("forMinimumLayer");
+
+            /*// Create the table if it doesn't exist.
+            CloudTable table = tableClient.GetTableReference("people");
+            table.CreateIfNotExists();
+
+            // Create a customer entity and add it to the table.
+            CustomerEntity customer1 = new CustomerEntity("Smith", "Jeff");
+            customer1.Email = "Jeff@contoso.com";
+            customer1.PhoneNumber = "425-555-0104";
+            
+
+            // Create the TableOperation that inserts the customer entity.
+            TableOperation insertOperation = TableOperation.Insert(customer1);
+            
+            // Execute the insert operation.
+            table.Execute(insertOperation);
+            */
+
+            // Create a retrieve operation that takes a customer entity.
+            TableOperation retrieveOperation = TableOperation.Retrieve<CustomerEntity>("0100CD93-0645-40A2-9B79-77B18FF0F61F", "0100CD93-0645-40A2-9B79-77B18FF0F61F");
+
+            // Execute the retrieve operation.
+            TableResult retrievedResult = table.Execute(retrieveOperation);
+
+            // Print the phone number of the result.
+            if (retrievedResult.Result != null)
+                //Response.Write(((CustomerEntity)retrievedResult.Result).PhoneNumber);
+                Response.Write(((CustomerEntity)retrievedResult.Result).recList);
+            else
+                Response.Write("nothing");
+            
+
+        }
+        public class CustomerEntity : TableEntity
+        {
+            public CustomerEntity(string first, string second)
+            {
+                this.PartitionKey = first;
+                this.RowKey = second;
+            }
+
+            public CustomerEntity() { }
+
+            public string recList { get; set; }
+        }
+
+    }
+}

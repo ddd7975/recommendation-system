@@ -1,0 +1,120 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Table;
+using System.Configuration;
+
+namespace recsysList
+{
+    public partial class Default : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string[] cookie = new string[2];
+            AddCookie("1-2JKD1I", cookie);
+            AddCookie("1-2JKBZE", cookie);
+            AddCookie("1-2JKCUD", cookie);
+            AddCookie("1-2JKCWN", cookie);
+            AddCookie("1-2JKD0B", cookie);
+
+            //Response.Write(cookie);
+
+            //string qfirstProduct = Request.QueryString["f"];
+            //string qsecondProduct = Request.QueryString["s"];
+            //recommander1.firstProduct = qfirstProduct;
+            //recommander1.secondProduct = qsecondProduct;
+            recommander1.firstProduct = cookie[0];
+            recommander1.secondProduct = cookie[1];
+
+            //// Retrieve the storage account from the connection string.
+            //CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+            //    ConfigurationManager.AppSettings["StorageConnectionString"]);
+
+            //// Create the table client.
+            //CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+
+            //// Create the CloudTable object that represents the "people" table.
+            //CloudTable table = tableClient.GetTableReference("forMinimumLayer");
+
+            //// Create a retrieve operation that takes a customer entity.
+            //TableOperation retrieveOperation = TableOperation.Retrieve<CustomerEntity>("0100CD93-0645-40A2-9B79-77B18FF0F61F", "1-2JKBYZ");
+
+            //// Execute the retrieve operation.
+            //TableResult retrievedResult = table.Execute(retrieveOperation);
+
+            //// Print the phone number of the result.
+            //if (retrievedResult.Result != null)
+            //    //Response.Write(((CustomerEntity)retrievedResult.Result).PhoneNumber);
+            //    Response.Write(((CustomerEntity)retrievedResult.Result).recList);
+            //else
+            //    Response.Write("nothing");
+
+
+        }
+        public string AddCookie(string state, string[] cookie)
+        {
+
+            //Gernerate a Cookie
+            HttpCookie myCookie = new HttpCookie("myTestCookie");
+            //set value
+            myCookie.Value = Server.UrlEncode(state);
+            //set expired date
+            myCookie.Expires = DateTime.Now.AddDays(2);
+            //write the result
+            Response.Cookies.Add(myCookie);
+
+            //read the cookie
+            HttpCookie myCookieNew = Request.Cookies["MyTestCookie"];
+            string[] cookieValue = new string[]{};
+            //foreach (string value in myCookieNew.Values)
+            for (int i = 1; i <= myCookieNew.Values.ToString().Length; i++)
+            {
+                cookieValue[i] = Server.UrlDecode(myCookieNew.Values[i]);
+            }
+
+            if (cookieValue.Length == 0) //cookie is empty or not
+            {
+                cookieValue[0] = "BLANK";
+                cookieValue[1] = state;
+            }
+            else
+            {
+                cookieValue[0] = cookieValue[1];
+                cookieValue[1] = state;
+            }
+
+            //
+            //產生一個Cookie物件
+            HttpCookie cookieNew = new HttpCookie("myTestCookie");
+            //設定多值(這裡只能以字串的方式設定)
+            cookieNew.Values.Add("1", cookieValue[0]);
+            cookieNew.Values.Add("2", Server.UrlEncode(cookieValue[0]));
+            //設定過期日(這裡只能針對全體cookie物件設定過期日)
+            cookieNew.Expires = DateTime.Now.AddDays(2);
+            //寫到用戶端
+            Response.Cookies.Add(cookieNew);
+ 
+
+            return cookieValue.ToString();
+
+        }
+        //public class CustomerEntity : TableEntity
+        //{
+        //    public CustomerEntity(string first, string second)
+        //    {
+        //        this.PartitionKey = first;
+        //        this.RowKey = second;
+        //    }
+
+        //    public CustomerEntity() { }
+
+        //    public string recList { get; set; }
+        //}
+
+    }
+}
