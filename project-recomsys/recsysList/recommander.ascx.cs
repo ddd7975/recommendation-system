@@ -108,26 +108,30 @@ namespace recsysList
                     string[] recListFinal = new string[recListUserRandom.Length + recListStateRandom.Length];
                     recListUserRandom.CopyTo(recListFinal, 0);
                     recListStateRandom.CopyTo(recListFinal, recListUserRandom.Length);
+                    /*
                     foreach (var value in recListFinal)
                     {
                         Response.Write("<br />" + value);
                     }
+                    */ 
                 }
                 else
                 {
                     int U = 5;
                     string[] recListUser = ((CustomerEntity)retrievedResultUser.Result).recList.Split(',');
-                    string[] recListUserRandom = new string[U];
+                    //string[] recListUserRandom = new string[U];
+                    string[] recListFinal = new string[U];
                     int[] top = randomNum(U);
                     for (int i = 0; i < U; i++)
                     {
-                        recListUserRandom[i] = recListUser[top[i]];
+                        recListFinal[i] = recListUser[top[i]];
                     }
-
-                    foreach (var value in recListUserRandom)
+                    /*
+                    foreach (var value in recListFinal)
                     {
                         Response.Write("<br />" + value);
                     }
+                    */ 
                 }
                 
             }
@@ -138,16 +142,20 @@ namespace recsysList
                 if (retrievedResultState.Result != null)
                 {
                     string[] recListState = ((CustomerEntity)retrievedResultState.Result).recList.Split(';');
-                    string[] recListStateRandom = new string[S];
+                    //string[] recListStateRandom = new string[S];
+                    string[] recListFinal = new string[S];
+                    
                     int[] top = randomNum(S);
                     for (int i = 0; i < S; i++)
                     {
-                        recListStateRandom[i] = recListState[top[i]];
+                        recListFinal[i] = recListState[top[i]];
                     }
-                    foreach (var value in recListStateRandom)
+                    /*
+                    foreach (var value in recListFinal)
                     {
                         Response.Write("<br />" + value);
                     }
+                    */
                 }
                 else 
                 {
@@ -162,20 +170,22 @@ namespace recsysList
 
                     // Create the CloudTable object that represents the table.
                     CloudTable tableHot = tableClientHot.GetTableReference("forHotItem");
-                    string[] hotItemList = new string[c] ; // to store the candidate item
+                    //string[] hotItemList = new string[c] ; // to store the candidate item
+                    string[] recListFinal = new string[c];
                     for (int r = 0; r < c; r++)
                     {
                         // Create a retrieve operation that takes a entity.
                         TableOperation retrieveOperationHot = TableOperation.Retrieve<CustomerEntity>(random[r].ToString(), "blank");
                         // Execute the retrieve operation.
                         TableResult retrievedResultHot = tableHot.Execute(retrieveOperationHot);
-                        hotItemList[r] = ((CustomerEntity)retrievedResultHot.Result).recList;
+                        recListFinal[r] = ((CustomerEntity)retrievedResultHot.Result).recList;
                     }
-                    
-                    foreach (var value in hotItemList)
+                    /*
+                    foreach (var value in recListFinal)
                     {
                         Response.Write("<br />" + value);
                     }
+                    */ 
                 }
             }
 
@@ -197,7 +207,7 @@ namespace recsysList
         public int[] randomNum(int len)
         {
             // 利用亂數增加商品豐富度
-            //int len = 10;
+            // int len = 10;
             Random rnd = new Random();
             int[] randomize = new int[len];
             for (int i = 0; i < len; i++)
