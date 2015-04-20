@@ -38,7 +38,8 @@ namespace recsysList
             recommander1.firstProduct = myCookie.Values["1"];
             recommander1.secondProduct = myCookie.Values["2"];
             //recommander1.userID = "00027AEA-D94F-414C-8601-DB31D4D22D19";
-            recommander1.userID = "00027AEA-D94F-414C";
+            //recommander1.userID = "00027AEA-D94F-414C";
+            recommander1.userID = "";
             recommander1.blank = "blank";
         }
 
