@@ -83,6 +83,7 @@ namespace recsysList
             }
 
             // 確認userID是否存在，若存在則按比例分配推薦項目清單；否則，全部由狀態決定推薦項目清單
+            string[] recListFinal = new string[5];
             if (retrievedResultUser.Result != null)
             {
                 if (retrievedResultState.Result != null)
@@ -105,33 +106,20 @@ namespace recsysList
                         recListStateRandom[i] = recListState[top2[i]];
                     }
 
-                    string[] recListFinal = new string[recListUserRandom.Length + recListStateRandom.Length];
+                    //string[] recListFinal = new string[recListUserRandom.Length + recListStateRandom.Length];
                     recListUserRandom.CopyTo(recListFinal, 0);
-                    recListStateRandom.CopyTo(recListFinal, recListUserRandom.Length);
-                    /*
-                    foreach (var value in recListFinal)
-                    {
-                        Response.Write("<br />" + value);
-                    }
-                    */ 
+                    recListStateRandom.CopyTo(recListFinal, recListUserRandom.Length); 
                 }
                 else
                 {
                     int numOfRecByUser = 5;
                     string[] recListUser = ((CustomerEntity)retrievedResultUser.Result).recList.Split(',');
-                    //string[] recListUserRandom = new string[U];
-                    string[] recListFinal = new string[numOfRecByUser];
+                    //string[] recListFinal = new string[numOfRecByUser];
                     int[] top = randomNum(numOfRecByUser);
                     for (int i = 0; i < numOfRecByUser; i++)
                     {
                         recListFinal[i] = recListUser[top[i]];
                     }
-                    /*
-                    foreach (var value in recListFinal)
-                    {
-                        Response.Write("<br />" + value);
-                    }
-                    */ 
                 }
                 
             }
@@ -142,27 +130,20 @@ namespace recsysList
                 if (retrievedResultState.Result != null)
                 {
                     string[] recListState = ((CustomerEntity)retrievedResultState.Result).recList.Split(';');
-                    //string[] recListStateRandom = new string[S];
-                    string[] recListFinal = new string[numOfRecByState];
+                    //string[] recListFinal = new string[numOfRecByState];
 
                     int[] top = randomNum(numOfRecByState);
                     for (int i = 0; i < numOfRecByState; i++)
                     {
                         recListFinal[i] = recListState[top[i]];
                     }
-                    /*
-                    foreach (var value in recListFinal)
-                    {
-                        Response.Write("<br />" + value);
-                    }
-                    */
                 }
                 else 
                 {
                     // userID和狀態皆不存在，推薦熱門點擊商品。取前h高的熱門點擊商品進行隨機推薦。
                     // 作法：先將數值向量c(1:50)隨機分派，再取前c個做為欲推薦的商品
-                    int numOfTop = 50; // choose top c high number of click item
-                    int numOfCandidate = 10; // choose c candidate
+                    int numOfTop = 30; // choose top c high number of click item
+                    int numOfCandidate = 5; // choose c candidate
                     int[] random = randomNum(numOfTop);
                     int[] candidate = new int[numOfCandidate];
                     // Create the table client.
@@ -171,7 +152,7 @@ namespace recsysList
                     // Create the CloudTable object that represents the table.
                     CloudTable tableHot = tableClientHot.GetTableReference("forHotItem");
                     //string[] hotItemList = new string[c] ; // to store the candidate item
-                    string[] recListFinal = new string[numOfCandidate];
+                    //string[] recListFinal = new string[numOfCandidate];
                     for (int r = 0; r < numOfCandidate; r++)
                     {
                         // Create a retrieve operation that takes a entity.
@@ -180,15 +161,14 @@ namespace recsysList
                         TableResult retrievedResultHot = tableHot.Execute(retrieveOperationHot);
                         recListFinal[r] = ((CustomerEntity)retrievedResultHot.Result).recList;
                     }
-                    /*
-                    foreach (var value in recListFinal)
-                    {
-                        Response.Write("<br />" + value);
-                    }
-                    */ 
                 }
             }
 
+            /*foreach (var value in recListFinal)
+            {
+                Response.Write("<br />" + value);
+            }
+            */ 
         }
 
 
