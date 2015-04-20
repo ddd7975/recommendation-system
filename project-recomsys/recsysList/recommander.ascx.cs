@@ -88,19 +88,19 @@ namespace recsysList
                 if (retrievedResultState.Result != null)
                 {
                     // 使用者清單取亂數index = 0, 1, 2的產品，狀態清單取亂數index = 0, 1的產品(暫)
-                    int U = 3; int S = 2;
+                    int numOfRecByUser = 3; int numOfRecByState = 2;
                     string[] recListUser = ((CustomerEntity)retrievedResultUser.Result).recList.Split(',');
-                    string[] recListUserRandom = new string[U];
-                    int[] top1 = randomNum(U);
-                    for (int i = 0; i < U; i++)
+                    string[] recListUserRandom = new string[numOfRecByUser];
+                    int[] top1 = randomNum(numOfRecByUser);
+                    for (int i = 0; i < numOfRecByUser; i++)
                     {
                         recListUserRandom[i] = recListUser[top1[i]];
                     }
 
                     string[] recListState = ((CustomerEntity)retrievedResultState.Result).recList.Split(';');
-                    string[] recListStateRandom = new string[S];
-                    int[] top2 = randomNum(S);
-                    for (int i = 0; i < S; i++)
+                    string[] recListStateRandom = new string[numOfRecByState];
+                    int[] top2 = randomNum(numOfRecByState);
+                    for (int i = 0; i < numOfRecByState; i++)
                     {
                         recListStateRandom[i] = recListState[top2[i]];
                     }
@@ -117,12 +117,12 @@ namespace recsysList
                 }
                 else
                 {
-                    int U = 5;
+                    int numOfRecByUser = 5;
                     string[] recListUser = ((CustomerEntity)retrievedResultUser.Result).recList.Split(',');
                     //string[] recListUserRandom = new string[U];
-                    string[] recListFinal = new string[U];
-                    int[] top = randomNum(U);
-                    for (int i = 0; i < U; i++)
+                    string[] recListFinal = new string[numOfRecByUser];
+                    int[] top = randomNum(numOfRecByUser);
+                    for (int i = 0; i < numOfRecByUser; i++)
                     {
                         recListFinal[i] = recListUser[top[i]];
                     }
@@ -138,15 +138,15 @@ namespace recsysList
             else
             {
                 // 若userID不存在，再判斷狀態是否存在，是則全部推薦清單由狀態清單產生，否則回傳"nothing"
-                int S = 5;
+                int numOfRecByState = 5;
                 if (retrievedResultState.Result != null)
                 {
                     string[] recListState = ((CustomerEntity)retrievedResultState.Result).recList.Split(';');
                     //string[] recListStateRandom = new string[S];
-                    string[] recListFinal = new string[S];
-                    
-                    int[] top = randomNum(S);
-                    for (int i = 0; i < S; i++)
+                    string[] recListFinal = new string[numOfRecByState];
+
+                    int[] top = randomNum(numOfRecByState);
+                    for (int i = 0; i < numOfRecByState; i++)
                     {
                         recListFinal[i] = recListState[top[i]];
                     }
@@ -161,18 +161,18 @@ namespace recsysList
                 {
                     // userID和狀態皆不存在，推薦熱門點擊商品。取前h高的熱門點擊商品進行隨機推薦。
                     // 作法：先將數值向量c(1:50)隨機分派，再取前c個做為欲推薦的商品
-                    int h = 50; // choose top c high number of click item
-                    int c = 10; // choose c candidate
-                    int[] random = randomNum(h);
-                    int[] candidate = new int[c];
+                    int numOfTop = 50; // choose top c high number of click item
+                    int numOfCandidate = 10; // choose c candidate
+                    int[] random = randomNum(numOfTop);
+                    int[] candidate = new int[numOfCandidate];
                     // Create the table client.
                     CloudTableClient tableClientHot = storageAccount.CreateCloudTableClient();
 
                     // Create the CloudTable object that represents the table.
                     CloudTable tableHot = tableClientHot.GetTableReference("forHotItem");
                     //string[] hotItemList = new string[c] ; // to store the candidate item
-                    string[] recListFinal = new string[c];
-                    for (int r = 0; r < c; r++)
+                    string[] recListFinal = new string[numOfCandidate];
+                    for (int r = 0; r < numOfCandidate; r++)
                     {
                         // Create a retrieve operation that takes a entity.
                         TableOperation retrieveOperationHot = TableOperation.Retrieve<CustomerEntity>(random[r].ToString(), "blank");
