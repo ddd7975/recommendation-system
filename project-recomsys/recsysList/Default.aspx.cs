@@ -23,8 +23,8 @@ namespace recsysList
             
             AddCookie("2C743FDB-0E91-496D-9B86-92B0075B292D");
             AddCookie("1-2JKD0B");
-            AddCookie("1-2JKCWN");
-            AddCookie("870BB506-D576-43F0-BFAD-BC6533086ACB");
+            AddCookie("4E8C4916-5A20-4169-9E56-5D53C1E281D4");
+            AddCookie("4E8C4916-5A20-4169-9E56-5D53C1E281D4");
             
             /*
             AddCookie("1-2JK");
@@ -39,7 +39,7 @@ namespace recsysList
             recommander1.secondProduct = myCookie.Values["2"];
             //recommander1.userID = "00027AEA-D94F-414C-8601-DB31D4D22D19";
             //recommander1.userID = "00027AEA-D94F-414C";
-            recommander1.userID = "";
+            recommander1.userID = "337bebab-3da2-4034-a47e-a106531f2662";
             recommander1.blank = "blank";
         }
 

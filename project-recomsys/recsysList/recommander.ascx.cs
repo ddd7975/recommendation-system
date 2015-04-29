@@ -164,11 +164,11 @@ namespace recsysList
                 }
             }
 
-            /*foreach (var value in recListFinal)
+            foreach (var value in recListFinal)
             {
                 Response.Write("<br />" + value);
             }
-            */ 
+             
         }
 
 
